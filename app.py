@@ -290,30 +290,31 @@ col_sample, col_sample_btn = st.columns([8, 2])
 results_zone = st.empty()
 
 with col_sample:
-    added_pop = cur.execute(f"SELECT population FROM {tname}").fetchall()
-    added_amounts = cur.execute(f"SELECT amount FROM {tname}").fetchall()
-    result = ""
-    for i in range(len(added_pop)):
-        pop = added_pop[i][0]
-        amount = float(added_amounts[i][0])
-        sign = int(np.sign(amount))
-        amount = abs(amount)
-        ops = ['-', '', '+']
-        if i == 0:
-            if sign > 0:
-                result += pop + "@" + str(amount) + "%"
-            else:
-                result += ops[sign+1] + pop + "@" + str(amount) + "%"
-        else:
-            result += ops[sign+1] + pop + "@" + str(amount) + "%"
+    # added_pop = cur.execute(f"SELECT population FROM {tname}").fetchall()
+    # added_amounts = cur.execute(f"SELECT amount FROM {tname}").fetchall()
+    # result = ""
+    # for i in range(len(added_pop)):
+    #     pop = added_pop[i][0]
+    #     amount = float(added_amounts[i][0])
+    #     sign = int(np.sign(amount))
+    #     amount = abs(amount)
+    #     ops = ['-', '', '+']
+    #     if i == 0:
+    #         if sign > 0:
+    #             result += pop + "@" + str(amount) + "%"
+    #         else:
+    #             result += ops[sign+1] + pop + "@" + str(amount) + "%"
+    #     else:
+    #         result += ops[sign+1] + pop + "@" + str(amount) + "%"
 
-    sample_text = st.text_input("Ghost name:", value=result)
+    # sample_text = st.text_input("Ghost name:", value=result)
+    sample_text = st.text_input("Ghost name:")
 
 
 with col_sample_btn:
     st.text('')
     st.text('')
-    disabled = (get_sum_amounts() != 100.0)
+    disabled = (get_sum_amounts() != 100.0) or (sample_text.strip() == "")
     if st.button("Create Ghost", disabled=disabled):
         added_amounts = cur.execute(f"SELECT amount FROM {tname}").fetchall()
         added_content = cur.execute(f"SELECT content FROM {tname}").fetchall()
