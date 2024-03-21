@@ -60,7 +60,9 @@ def create_ghost(arrays_text: list, amounts: list) -> str:
 
     result = ""
     for i in result_array:
-        result += str(round(i, 6))+","
+        # result += str(round(i, 6))+","
+        # let's remove rounding for more accurate result?
+        result += str(i) + ","
 
     return result[:-1]
 
