@@ -14,7 +14,8 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("PopGhost")
+st.sidebar.title("👻")
+# st.title("👻")
 st.caption("Create ghost populations using G25 coordinates")
 
 
@@ -73,7 +74,8 @@ def get_amounts(sample_text):
     if texts[0] != "":
         amounts = [i.split('@')[1] for i in texts]
         # Removing the percent
-        amounts = [float(i[:-1]) for i in amounts]
+        # amounts = [float(i[:-1]) for i in amounts]
+        amounts = [int(i[:-1]) for i in amounts]
         return amounts
     else:
         return ""
@@ -140,7 +142,7 @@ def get_db(string_data, ssid: str):
 
 
 uploaded_file = st.file_uploader(
-    "Upload G25 Populations File:", type=['csv', 'txt'])
+    "Upload Global 25 PCA spreadsheet", type=['csv', 'txt'])
 if uploaded_file is not None:
     stringio = StringIO(uploaded_file.getvalue().decode("ISO-8859-1"))
     string_data = stringio.read()
@@ -159,7 +161,8 @@ cur, con, tname = get_db(string_data, ssid)
 
 def get_sum_amounts():
     added_amounts = cur.execute(f"SELECT amount FROM {tname}").fetchall()
-    added_amounts = [float(i[0]) for i in added_amounts]
+    # added_amounts = [float(i[0]) for i in added_amounts]
+    added_amounts = [int(i[0]) for i in added_amounts]
     return sum(added_amounts)
 
 
@@ -169,16 +172,16 @@ with col_1:
 
     res = cur.execute("SELECT population FROM filedata")
     choices = [i[0] for i in res.fetchall()]
-    selected = st.selectbox('Choose a population:', choices)
+    selected = st.selectbox('Choose a population', choices)
 
 with col_2:
     percent = st.number_input(
-        'Amount', min_value=0.0, max_value=200.00, value=50.0, label_visibility='hidden')
+        'Amount', min_value=0, max_value=200, value=50, step=1, label_visibility='hidden')
 
 with col_3:
     st.text('')
     st.text('')
-    st.markdown("*%*")
+    st.markdown("")
 
 with col_4:
     st.text('')
@@ -252,9 +255,11 @@ with col_amount:
         key_amount = np.random.randint(40000, 79000)
 
         st.number_input("Amount",
-                        min_value=-300.0,
-                        max_value=300.0,
-                        value=float(samples[i][3]),
+                        min_value=-300,
+                        max_value=300,
+                        step=1,
+                        # value=float(samples[i][3]),
+                        value=int(samples[i][3]),
                         key=key_amount,
                         on_change=cllbk_amnt,
                         args=[samples[i][0], key_amount],
@@ -278,10 +283,10 @@ _, col_sum = st.columns([8, 2])
 with col_sum:
     sum_amounts = get_sum_amounts()
     text = f"### {sum_amounts}"
-    if sum_amounts != 100.0:
-        text += "🚨"
+    if sum_amounts != 100:
+        text += "⛔"
     else:
-        text += "✔"
+        text += "✅"
 
     st.markdown(text)
 
@@ -308,13 +313,13 @@ with col_sample:
     #         result += ops[sign+1] + pop + "@" + str(amount) + "%"
 
     # sample_text = st.text_input("Ghost name:", value=result)
-    sample_text = st.text_input("Ghost name:")
+    sample_text = st.text_input("Ghost name")
 
 
 with col_sample_btn:
     st.text('')
     st.text('')
-    disabled = (get_sum_amounts() != 100.0) or (sample_text.strip() == "")
+    disabled = (get_sum_amounts() != 100) or (sample_text.strip() == "")
     if st.button("Create Ghost", disabled=disabled):
         added_amounts = cur.execute(f"SELECT amount FROM {tname}").fetchall()
         added_content = cur.execute(f"SELECT content FROM {tname}").fetchall()
