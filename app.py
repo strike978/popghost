@@ -1,4 +1,3 @@
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 import chardet
 from io import StringIO
 import numpy as np
