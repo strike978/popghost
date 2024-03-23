@@ -147,15 +147,16 @@ if menu_selection == "👻 Ghosts":
     uploaded_file = st.file_uploader(
         "Upload Global 25 PCA spreadsheet", type=['csv', 'txt'])
     if uploaded_file is not None:
-        # stringio = StringIO(uploaded_file.getvalue().decode("ISO-8859-1"))
-        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        stringio = StringIO(uploaded_file.getvalue().decode("ISO-8859-15"))
         string_data = stringio.read()
 
         # Data file
 
     else:
-        data_file = open("data.txt")
-        string_data = data_file.read()
+        # data_file = open("data.txt")
+        # string_data = data_file.read()
+        with open("data.txt", 'r', encoding='utf-8') as data_file:
+            string_data = data_file.read()
 
     ssid = get_script_run_ctx().session_id
     ssid = ssid.replace('-', '')
@@ -250,30 +251,40 @@ if menu_selection == "👻 Ghosts":
     with col_amount:
         for i in range(length):
             key_amount = np.random.randint(40000, 79000)
+            col1, col2 = st.columns(2)  # Create two columns
+            with col1:
+                st.number_input("Amount",
+                                min_value=-300,
+                                max_value=300,
+                                step=1,
+                                # value=float(samples[i][3]),
+                                value=int(samples[i][3]),
+                                key=key_amount,
+                                on_change=cllbk_amnt,
+                                args=[samples[i][0], key_amount],
+                                label_visibility='hidden'
+                                )
+            with col2:
+                st.text('')
+                st.text('')
+                st.button("🗑️",
+                          key=np.random.randint(9000, 29000),
+                          on_click=cllbk_del,
+                          args=[samples[i][0]],
+                          help="Delete",
+                          )
 
-            st.number_input("Amount",
-                            min_value=-300,
-                            max_value=300,
-                            step=1,
-                            # value=float(samples[i][3]),
-                            value=int(samples[i][3]),
-                            key=key_amount,
-                            on_change=cllbk_amnt,
-                            args=[samples[i][0], key_amount],
-                            label_visibility='hidden'
-                            )
-
-    with col_del:
-        for i in range(length):
-            st.text('')
-            st.text('')
-            if i in [1+(i*4) for i in range(length) if i < (length-1)/4]:
-                st.text("")
-            st.button("Delete",
-                      key=np.random.randint(9000, 29000),
-                      on_click=cllbk_del,
-                      args=[samples[i][0]],
-                      )
+    # with col_del:
+    #     for i in range(length):
+    #         st.text('')
+    #         # st.text('')
+    #         if i in [1+(i*4) for i in range(length) if i < (length-1)/4]:
+    #             st.text("")
+    #         st.button("Delete",
+    #                   key=np.random.randint(9000, 29000),
+    #                   on_click=cllbk_del,
+    #                   args=[samples[i][0]],
+    #                   )
 
     _, col_sum = st.columns([8, 2])
     with col_sum:
