@@ -135,27 +135,22 @@ if menu_selection == "👻 Ghosts":
         added_amounts = [int(i[0]) for i in added_amounts]
         return sum(added_amounts)
 
-    col_1, col_2, col_3, col_4, col_5 = st.columns([5, 2, 1, 1, 1])
+    col1, col2, col3 = st.columns([7, 1, 5])  # Adjust the widths as needed
 
-    with col_1:
-
+    with col1:
         res = cur.execute("SELECT population FROM filedata")
         choices = [i[0] for i in res.fetchall()]
         selected = st.selectbox('Choose a population', choices)
 
-    with col_2:
+    with col2:
         percent = st.number_input(
             'Amount', min_value=0, max_value=200, value=50, step=1, label_visibility='hidden')
 
-    with col_3:
-        st.text('')
-        st.text('')
-        st.markdown("")
-
-    with col_4:
-        st.text('')
-        st.text('')
-        if st.button("Add"):
+    with col3:
+        st.write('')
+        st.write('')
+        add_btn, subtract_btn = st.columns([2, 15])
+        if add_btn.button("Add"):
             res_btn = cur.execute(
                 f"SELECT content FROM filedata WHERE population = '{selected}'")
             res_btn_txt = res_btn.fetchone()[0]
@@ -165,22 +160,18 @@ if menu_selection == "👻 Ghosts":
             """.format(tname, selected, res_btn_txt, percent))
             con.commit()
 
-    with col_5:
-        st.text('')
-        st.text('')
-        if st.button("Subtract"):
+        if subtract_btn.button("Subtract"):
             res_btn = cur.execute(
                 f"SELECT content FROM filedata WHERE population = '{selected}'")
             res_btn_txt = res_btn.fetchone()[0]
             cur.execute("""
                 INSERT INTO {0} (population, content, amount)  VALUES
                 ('{1}', '{2}', {3})
-            """.format(tname, selected, res_btn_txt, percent*-1))
+            """.format(tname, selected, res_btn_txt, percent * -1))
             con.commit()
 
     data_mod = cur.execute(
         f"SELECT id, population, content, amount FROM {tname}")
-    col_text, col_amount, col_del = st.columns([6, 2, 2])
 
     samples = data_mod.fetchall()
     length = len(samples)
@@ -202,8 +193,9 @@ if menu_selection == "👻 Ghosts":
         cur.execute(query)
         con.commit()
 
-    with col_text:
-        for i in range(length):
+    for i in range(length):
+        col4, col5, col6 = st.columns([7, 1, 5])
+        with col4:
             key = np.random.randint(200, 9000)
             st.text_input("Population",
                           value=samples[i][2],
@@ -212,31 +204,27 @@ if menu_selection == "👻 Ghosts":
                           args=[samples[i][0], key],
                           label_visibility='hidden'
                           )
-
-    with col_amount:
-        for i in range(length):
+        with col5:
             key_amount = np.random.randint(40000, 79000)
-            col1, col2 = st.columns(2)  # Create two columns
-            with col1:
-                st.number_input("Amount",
-                                min_value=-300,
-                                max_value=300,
-                                step=1,
-                                value=int(samples[i][3]),
-                                key=key_amount,
-                                on_change=cllbk_amnt,
-                                args=[samples[i][0], key_amount],
-                                label_visibility='hidden'
-                                )
-            with col2:
-                st.text('')
-                st.text('')
-                st.button("🗑️",
-                          key=np.random.randint(9000, 29000),
-                          on_click=cllbk_del,
-                          args=[samples[i][0]],
-                          help="Delete",
-                          )
+            st.number_input("Amount",
+                            min_value=-300,
+                            max_value=300,
+                            step=1,
+                            value=int(samples[i][3]),
+                            key=key_amount,
+                            on_change=cllbk_amnt,
+                            args=[samples[i][0], key_amount],
+                            label_visibility='hidden'
+                            )
+        with col6:
+            st.text('')
+            st.text('')
+            st.button("🗑️",
+                      key=np.random.randint(9000, 29000),
+                      on_click=cllbk_del,
+                      args=[samples[i][0]],
+                      help="Delete",
+                      )
 
     _, col_sum = st.columns([8, 2])
     with col_sum:
