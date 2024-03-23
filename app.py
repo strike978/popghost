@@ -230,9 +230,9 @@ if menu_selection == "👻 Ghosts":
         sum_amounts = get_sum_amounts()
         text = f"### {sum_amounts}"
         if sum_amounts != 100:
-            text += "⛔"
+            text += " ⛔"
         else:
-            text += "✅"
+            text += " ✅"
 
         st.markdown(text)
 
