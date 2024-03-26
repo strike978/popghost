@@ -16,8 +16,8 @@ st.set_page_config(
 )
 
 # Create a menu with two options: Ghosts and Convert
-menu_selection = option_menu(None, ["👻 Ghosts", "🔄 Convert"],
-                             icons=[' ', ' ',],
+menu_selection = option_menu(None, ["👻 Ghosts", "👨‍👩‍👦 Sim Parent", "🔄 Convert"],
+                             icons=[' ', ' ', ' ',],
                              menu_icon="list", default_index=0, orientation="horizontal")
 
 
@@ -407,3 +407,27 @@ elif menu_selection == "🔄 Convert":
 
         # Display the unscaled result in a text area in the Streamlit app
         st.text_area("Unscaled coordinates", value=unscaled_result)
+
+
+elif menu_selection == "👨‍👩‍👦 Sim Parent":
+    def linear_interpolation(child_data, parent_data):
+        interpolated_data = []
+        for child, parent in zip(child_data, parent_data):
+            parent2 = (child + child) - parent
+            interpolated_data.append(parent2)
+        return interpolated_data
+
+    st.caption("Simulate G25 Coordinates of Parent")
+
+    child_data = st.text_input("Child G25 Coordinates", value="")
+    parent_data = st.text_input("Parent G25 Coordinates", value="")
+
+    child_data = [float(x.strip()) for x in child_data.split(",")[1:]]
+    parent_data = [float(x.strip()) for x in parent_data.split(",")[1:]]
+
+    result_name = st.text_input("Parent Name", value="")
+
+    interpolated_data = linear_interpolation(child_data, parent_data)
+
+    if st.button("Simulate Parent"):
+        st.code(f"{result_name},{','.join(str(x) for x in interpolated_data)}")
