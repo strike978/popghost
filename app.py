@@ -16,8 +16,8 @@ st.set_page_config(
 )
 
 # Create a menu with two options: Ghosts and Convert
-menu_selection = option_menu(None, ["👻 Ghosts", "👨‍👩‍👦 Sim Parent", "🔄 Convert"],
-                             icons=[' ', ' ', ' ',],
+menu_selection = option_menu(None, ["👻 Ghosts", "🔄 Convert"],
+                             icons=[' ',  ' ',],
                              menu_icon="list", default_index=0, orientation="horizontal")
 
 
